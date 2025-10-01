@@ -358,7 +358,7 @@ def new_transaction_modal(open_modal, cancel, submit, category, amount, t_date, 
     if trigger == 'manual-button.n_clicks':
         is_open = True
     elif trigger == 't-modal-submit.n_clicks':
-        if amount != '$ 0' and description is not None and account is not None:
+        if isinstance(amount, float) and description is not None and account is not None:
             if category == 'Add new category...':
                 if new_category == '':
                     is_open = True
@@ -394,8 +394,14 @@ def new_transaction_modal(open_modal, cancel, submit, category, amount, t_date, 
             note = None
             update_tab = True
         else:
+            if not isinstance(amount, float):
+                err = 'an Amount'
+            elif description is None:
+                err = 'a Description'
+            elif account is None:
+                err = 'an Account'
             is_open = True
-            msg_str = dbc.Alert("You must specify all values.", color="danger")
+            msg_str = dbc.Alert(f"You must specify {err}", color="danger")
     elif trigger in ['modal-category-dropdown.value', 'transaction-value-input.value', 'transaction-date.date', 'posted-date.date', 'description-input.value',
                      'modal-account-dropdown.value', 'modal-account-input.value', 'modal-category-input.value', 'note-input.value']:
         is_open = True
