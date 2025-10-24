@@ -107,8 +107,13 @@ configurations_sidebar = html.Div(
                      children=[dcc.Input(id='account-input', type='text', style={'display': 'inline-block'},
                                          placeholder='New account name...')], ),
             html.Div(style={'display': 'inline-block', 'padding': '5px 20px 20px 20px'},
-                     children=[dcc.Upload(id='upload-data', multiple=True, style={'display': 'inline-block'},
-                                          children=[html.Button('Select Transaction CSV')])]),
+                     children=[
+                         html.Div(style={'display': 'inline-block', 'padding': '0 20px 0 0'},
+                                  children=[dcc.Upload(id='upload-data', multiple=True, style={'display': 'inline-block'},
+                                            children=[html.Button('Select Transaction CSV')])]),
+                         html.Div(style={'display': 'inline-block', 'padding': '0 0 0 5px'},
+                                  children=[html.Button(children=['Undo Last Upload ', html.I(className="fa-solid fa-rotate-left")],
+                                                        id='undo-upload', style={'display': 'inline-block'})])]),
             html.I(id='upload-message',
                    style={'display': 'inline-block', 'padding': '0px 20px 10px 22px'}),
             html.Div(style={'padding': '10px 20px', 'display': 'inline-block', 'float': 'right'},
@@ -179,8 +184,6 @@ configurations_sidebar = html.Div(
             html.I(id='export-message', style={'display': 'inline-block', 'padding': '0px 20px 10px 20px'}),
         ]),
     ])
-
-# Output('filter-dropdown', 'options'),
 
 
 @callback(
@@ -430,8 +433,9 @@ def new_transaction_modal(open_modal, cancel, submit, category, amount, t_date, 
     Input('account-dropdown', 'value'),
     Input('upload-data', 'contents'),
     Input('account-input', 'value'),
+    Input('undo-upload', 'n_clicks'),
 )
-def parse_upload_transaction_file(account, loaded_file, new_account):
+def parse_upload_transaction_file(account, loaded_file, new_account, undo_upload):
     """When button is clicked, checks for valid current file then writes new config file with updated parameters.
 
     Args:
@@ -515,6 +519,15 @@ def parse_upload_transaction_file(account, loaded_file, new_account):
     elif trigger == 'account-input.value':
         account_input = {'display': 'inline-block', 'width': '100%'}
         upload_button = False
+
+    elif trigger == 'undo-upload.n_clicks':
+        if MD.tid is not None:
+            i = MD.delete_transaction(MD.tid)
+            msg = f"Successfully deleted {i} new transactions"
+        else:
+            msg = "No transactions to delete"
+        if account is not None:
+            upload_button = False
 
     return msg, upload_button, account_input, new_account, get_accounts_list('multi'), account_dropdown_value, update_tab
 
