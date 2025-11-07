@@ -72,7 +72,7 @@ def make_budget_plots(conf_dict):
             fig.add_trace(go.Bar(y=[cat], x=[percent], name=cat, orientation='h', text=m, textposition="outside",
                                  meta=meta, hovertemplate=hovertemplate))
 
-        max_x = max(percent_list) if percent_list else 0
+        max_x = max(100, max(percent_list)) if percent_list else 0
         min_x = min(percent_list) if percent_list and min(percent_list) < 0 else 0
         fig.update_layout(xaxis_range=[min_x * 1.15, max_x * 1.15])
 
