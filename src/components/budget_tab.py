@@ -72,7 +72,7 @@ def make_budget_plots(conf_dict):
             fig.add_trace(go.Bar(y=[cat], x=[percent], name=cat, orientation='h', text=m, textposition="outside",
                                  meta=meta, hovertemplate=hovertemplate))
 
-        max_x = max(percent_list) if percent_list else 0
+        max_x = max(100, max(percent_list)) if percent_list else 0
         min_x = min(percent_list) if percent_list and min(percent_list) < 0 else 0
         fig.update_layout(xaxis_range=[min_x * 1.15, max_x * 1.15])
 
@@ -167,7 +167,8 @@ budget_tab = dcc.Tab(label="Budget", value='Budget', className='tab-body', child
                           children=[html.I(className="fa-solid fa-circle-question")]),
                  dbc.Modal(id="budget-help", is_open=False, children=[
                      dbc.ModalHeader(dbc.ModalTitle("Budget Help")),
-                     dbc.ModalBody(children=['The Budget tab allows you to set budgets for each category and see your progress. Budgets can not be set for a Parent category- the budget is just the sum of all the children categories.', html.Br(), html.Br(),
+                     dbc.ModalBody(children=['The Budget tab allows you to set budgets for each category and see your progress. Budgets can not be set for a Parent category- the budget is just the sum of all the children categories.',
+                                             html.Br(), html.Br(),
                                              'Set a new category budget or update an exising budget with the Add or Update Budget button.', html.Br(), html.Br(),
                                              'The categories are split into Income and Spending budgets. The table below the budget graphs shows your total budgeted income vs spending.', html.Br(), html.Br(),
                                              'The thick line vertical shows your limit of 100% per category, while the thinner line shows how far through the month you are.', html.Br(), html.Br(),
@@ -296,7 +297,7 @@ def toggle_budget_modal(open_modal, cancel, submit, budget_category, budget_valu
                     'category': child_cat}))])
             num_text = 'Group budget amount:'
             input_disabled = True
-        
+
         # But if it's a single category, allow value input
         else:
             if bv != 0:
