@@ -21,6 +21,18 @@ PLOTLY_COLORS = [
     '#FECB52',
 ]
 
+PLOTLY_COLORS_SECONDARY = [
+    "#BBBEEE",
+    "#E7A89D",
+    "#84C5B4",
+    "#D9BDF8",
+    "#F3C09A",
+    "#98DDE9",
+    "#FCA5BD",
+    "#CFE4BA",
+    "#F7C2F7",
+    "#FADFA0",
+]
 
 COLORS = {
     'light': {
@@ -108,3 +120,8 @@ def get_accounts_list(extra=''):
 def get_color(i):
     """Get color for plotting from list of colors"""
     return PLOTLY_COLORS[i % len(PLOTLY_COLORS)]
+
+
+def get_color_secondary(i):
+    """Get color for plotting from list of colors"""
+    return PLOTLY_COLORS_SECONDARY[i % len(PLOTLY_COLORS_SECONDARY)]

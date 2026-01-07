@@ -202,10 +202,11 @@ configurations_sidebar = html.Div(
     Input('date-range', 'start_date'),
     Input('date-range', 'end_date'),
     Input('bar-button', 'n_clicks'),
+    Input('sankey-button', 'n_clicks'),
     Input('pie-button', 'n_clicks'),
     Input('time-button', 'n_clicks'),
 )
-def update_parameters(field_filter, time_filter, cat_filter, acc_filter, sort_filter, current_params, start_date, end_date, bar_button, pie_button, time_button):
+def update_parameters(field_filter, time_filter, cat_filter, acc_filter, sort_filter, current_params, start_date, end_date, bar_button, sankey_button, pie_button, time_button):
     """Update current parameter dictionary and visible parameters based on selected bit or manual changes.
 
     Args:
@@ -281,10 +282,12 @@ def update_parameters(field_filter, time_filter, cat_filter, acc_filter, sort_fi
     elif trigger == 'sort-dropdown.value':
         new_params['sort_filter'] = sort_filter
 
-    elif trigger == 'pie-button.n_clicks':
-        current_params['plot_type'] = 'pie'
     elif trigger == 'bar-button.n_clicks':
         current_params['plot_type'] = 'bar'
+    elif trigger == 'sankey-button.n_clicks':
+        current_params['plot_type'] = 'sankey'
+    elif trigger == 'pie-button.n_clicks':
+        current_params['plot_type'] = 'pie'
     elif trigger == 'time-button.n_clicks':
         current_params['plot_type'] = 'time'
 
