@@ -95,6 +95,48 @@ def make_trends_plot(conf_dict):
         fig_obj.update_xaxes(title_text="Amount ($)")
         fig_obj.update_layout(barmode='stack')
 
+    elif plot_type == 'sankey':
+        fig_obj = go.Figure()
+        lab_val = _sort_plot_data()
+        len_income = len(lab_val['Income']['labels'])
+        len_spending = len(lab_val['Spending']['labels'])
+
+        # Make the Nodes and hover template
+        label = list(lab_val['Income']['labels']) + ['Net'] + list(lab_val['Spending']['labels'])
+        net_value = max(sum(lab_val['Income']['values']), sum(lab_val['Spending']['values']))
+        value = list(lab_val['Income']['values']) + [net_value] + list(lab_val['Spending']['values'])
+        node_hover = [f"{n}:  $ {v:,.2f}" for n, v in zip(label, value)]
+        value.remove(net_value)
+
+        source = list(range(len_income))
+        source.extend([len_income] * len_spending)
+        target = [len_income] * len_income
+        target.extend(range(1 + len_income, len_spending + 1 + len_income))
+
+        node = dict(
+            pad=15,
+            thickness=15,
+            line=dict(color="black", width=0.5),
+            label=label,
+            color=[utils.get_color(i) for i in range(len_income)] + ['black'] + [utils.get_color(i) for i in range(len_spending)],
+            customdata=node_hover,
+            hovertemplate='%{customdata}<extra></extra>'
+        )
+
+        # Make the Links and hover template
+        link_label = list(lab_val['Income']['labels']) + list(lab_val['Spending']['labels'])
+        link_hover = [f"{n}:  $ {v:,.2f}" for n, v in zip(link_label, value)]
+
+        link = dict(
+            source=source,
+            target=target,
+            value=value,
+            color=[utils.get_color_secondary(i) for i in range(len_income)] + [utils.get_color_secondary(i) for i in range(len_spending)],
+            customdata=link_hover,
+            hovertemplate='%{customdata}<extra></extra>')
+
+        fig_obj.add_trace(go.Sankey(node=node, link=link))
+
     # Or make pie plot
     elif plot_type == 'pie':
         fig_obj = make_subplots(rows=1, cols=2, subplot_titles=['Income', 'Spending'], specs=[[{'type': 'domain'}, {'type': 'domain'}]])
@@ -175,6 +217,7 @@ trends_tab = dcc.Tab(label="Trends", value='Trends', children=[
                      dbc.ModalBody(children=['The Trends tab helps you visualize overall trends in your money flow.', html.Br(), html.Br(),
                                              'There are three types of plots: ',
                                              html.Li('Bar: To compare income vs spending'),
+                                             html.Li('Sankey: To visualize income and spending per category'),
                                              html.Li('Pie: To compare percent of spending per category'),
                                              html.Li('Over time: To compare spending and income over time'), html.Br(),
                                              "The graphs with auto-populate according to the filters given on the left. "
@@ -187,6 +230,9 @@ trends_tab = dcc.Tab(label="Trends", value='Trends', children=[
                  html.Div(style={'padding': '10px 5px', 'display': 'inline-block', 'float': 'right'},
                           children=[html.Button(style={'width': '75px', 'padding': '0'},
                                                 children=["Pie ", html.I(className="fas fa-chart-pie")], id="pie-button")]),
+                 html.Div(style={'padding': '10px 5px', 'display': 'inline-block', 'float': 'right'},
+                          children=[html.Button(style={'width': '105px', 'padding': '0'},
+                                                children=["Sankey ", html.I(className="fa-solid fa-equals")], id="sankey-button")]),
                  html.Div(style={'padding': '10px 5px', 'display': 'inline-block', 'float': 'right'},
                           children=[html.Button(style={'width': '85px', 'padding': '0'},
                                                 children=["Bar ", html.I(className="fa-solid fa-chart-column")], id="bar-button")]),
