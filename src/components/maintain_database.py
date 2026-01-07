@@ -351,7 +351,7 @@ class MaintainDatabase:
             self.budget_table.update_one({'category': category}, {"$set": {'value': value}})
         else:
             parent = self.categories_table.find_one({'category name': category})
-            self.budget_table.insert_one({'category': category, 'value': value, 'is_parent': True if parent != '' else False})
+            self.budget_table.insert_one({'category': category, 'value': value, 'is_parent': True if parent is None else False})
         self.update_parent_budget(category)
 
     def update_parent_budget(self, category):

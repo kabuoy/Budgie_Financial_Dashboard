@@ -108,10 +108,10 @@ configurations_sidebar = html.Div(
                                          placeholder='New account name...')], ),
             html.Div(style={'display': 'inline-block', 'padding': '5px 20px 20px 20px'},
                      children=[
-                         html.Div(style={'display': 'inline-block', 'padding': '0 20px 0 0'},
+                         html.Div(style={'display': 'inline-block', 'padding': '0 25px 0 0'},
                                   children=[dcc.Upload(id='upload-data', multiple=True, style={'display': 'inline-block'},
                                             children=[html.Button('Select Transaction CSV')])]),
-                         html.Div(style={'display': 'inline-block', 'padding': '0 0 0 5px'},
+                         html.Div(style={'display': 'inline-block', 'padding': '10px 0 0 0'},
                                   children=[html.Button(children=['Undo Last Upload ', html.I(className="fa-solid fa-rotate-left")],
                                                         id='undo-upload', style={'display': 'inline-block'})])]),
             html.I(id='upload-message',
