@@ -527,6 +527,7 @@ def parse_upload_transaction_file(account, loaded_file, new_account, undo_upload
         if MD.tid is not None:
             i = MD.delete_transaction(MD.tid)
             msg = f"Successfully deleted {i} new transactions"
+            update_tab = True
         else:
             msg = "No transactions to delete"
         if account is not None:
