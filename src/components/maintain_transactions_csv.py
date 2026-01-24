@@ -106,8 +106,10 @@ class MaintainCSV(MaintainDatabase):
     def load_transactions(self, sheet, account=None):
         """Import transaction CSV and save many transactions to dataframe"""
         transaction_list = self._add_transactions(sheet, account)
+        self.tid = []
         for trans in transaction_list:
             trans['_id'] = str(uuid.uuid4())
+            self.tid.append(trans['_id'])
 
         # Insert transactions into database
         if len(transaction_list) > 0:
@@ -207,9 +209,13 @@ class MaintainCSV(MaintainDatabase):
     def delete_transaction(self, transaction_dict):
         """Delete a list of transactions from the Transactions table"""
         for trans in transaction_dict:
-            rm_i = self.transactions_table[self.transactions_table['_id'] == trans['_id']].index
+            try:
+                rm_i = self.transactions_table[self.transactions_table['_id'] == trans['_id']].index
+            except TypeError:
+                rm_i = self.transactions_table[self.transactions_table['_id'] == trans].index
             self.transactions_table = BudgieDF(self.transactions_table.drop(rm_i))
         self.export_data_to_csv()
+        return len(transaction_dict)
 
     """====== Budget ======"""
     def add_budget_item(self, category, value):
