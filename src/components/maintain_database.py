@@ -23,6 +23,7 @@ class MaintainDatabase:
         self.accounts_table = None
         self.categories_table = None
         self.autocategories = None
+        self.tid = None
         self.file_dir = os.getcwd()
 
         self.load_initial_data()
@@ -44,7 +45,7 @@ class MaintainDatabase:
         if isinstance(transaction_list, str):
             return transaction_list
         elif len(transaction_list) > 0:
-            self.transactions_table.insert_many(transaction_list)
+            self.tid = self.transactions_table.insert_many(transaction_list).inserted_ids
         return len(transaction_list)
 
     def _add_transactions(self, sheet, account=None):
@@ -335,14 +336,12 @@ class MaintainDatabase:
     def delete_transaction(self, transaction_dict):
         """Delete a list of transactions from the Transactions table"""
         for trans in transaction_dict:
-            trans.pop('_id')
             try:
-                trans['transaction date'] = datetime.strptime(trans['transaction date'], '%m-%d-%Y')
-                trans['posted date'] = datetime.strptime(trans['posted date'], '%m-%d-%Y')
+                isinstance(trans['_id'], str)
+                self.transactions_table.delete_one({'_id': ObjectId(trans['_id'])})
             except TypeError:
-                # The date is already a datetime object
-                pass
-            self.transactions_table.delete_one(trans)
+                self.transactions_table.delete_one({'_id': trans})
+        return len(transaction_dict)
 
     """====== Budget ======"""
     def add_budget_item(self, category, value):
@@ -352,7 +351,7 @@ class MaintainDatabase:
             self.budget_table.update_one({'category': category}, {"$set": {'value': value}})
         else:
             parent = self.categories_table.find_one({'category name': category})
-            self.budget_table.insert_one({'category': category, 'value': value, 'is_parent': True if parent != '' else False})
+            self.budget_table.insert_one({'category': category, 'value': value, 'is_parent': True if parent is None else False})
         self.update_parent_budget(category)
 
     def update_parent_budget(self, category):
