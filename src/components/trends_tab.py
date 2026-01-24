@@ -198,11 +198,44 @@ def make_trends_plot(conf_dict):
         fig_obj.update_yaxes(title_text="Amount ($)")
         fig_obj.update_layout(barmode='relative')
 
+    # Or make a table
+    elif plot_type == 'table':
+        import pandas as pd
+
+        fig_obj = go.Figure()
+        lab_val = _sort_plot_data()
+
+        # Import spending and income data into DataFrame and format table
+        df = pd.DataFrame(lab_val['Spending'])
+        df.columns = ['Category', 'Spending']
+        df['Spending'] = -1 * df['Spending']
+        df2 = pd.DataFrame(lab_val['Income'])
+        df2.columns = ['Category', 'Income']
+        df3 = pd.merge(df2, df, on='Category', how='outer')
+        df3 = df3.fillna(0)
+        df3['Net'] = df3['Spending'] + df3['Income']
+        df3 = df3.sort_values('Net', ascending=False)
+        for col in ['Income', 'Spending', 'Net']:
+            df3[col] = df3[col].apply(lambda x: "$ {:,.2f}".format(x))
+
+        fig_obj.add_trace(
+            go.Table(header=dict(
+                         values=['<b>Category<b>', '<b>Income<b>', '<b>Spending<b>', '<b>Net<b>'],
+                         font_size=16,
+                         height=30),
+                     cells=dict(
+                         values=[df3.Category, df3.Income, df3.Spending, df3.Net],
+                         font_size=16,
+                         height=30)
+                     ))
+
+    # Else there's no data to plot so make it empty
     elif plot_type == 'text_only':
         fig_obj = go.Figure()
         fig_obj.add_annotation(text=text, xref="paper", yref="paper", x=0.5, y=0.75, showarrow=False,
                                bordercolor="#162432", borderwidth=2, borderpad=5, bgcolor="#AFBDCB",
                                font=dict(size=20))
+
     update_layout_axes(fig_obj)
     return fig_obj
 
@@ -220,10 +253,14 @@ trends_tab = dcc.Tab(label="Trends", value='Trends', children=[
                                              html.Li('Sankey: To visualize income and spending per category'),
                                              html.Li('Pie: To compare percent of spending per category'),
                                              html.Li('Over time: To compare spending and income over time'), html.Br(),
+                                             html.Li('Table: To compare net spending and income per category'), html.Br(),
                                              "The graphs with auto-populate according to the filters given on the left. "
                                              "If you don't see any data, try changing a filter (most likely the time window).", html.Br(), html.Br(),
                                              'To interact with the plot, you can click and double click the legend items to hide them, and click and drag to zoom in and move around.'
                                              ])]),
+                 html.Div(style={'padding': '10px 5px', 'display': 'inline-block', 'float': 'right'},
+                          children=[html.Button(style={'width': '100px', 'padding': '0'},
+                                                children=["Table ", html.I(className="fa-solid fa-table")], id="table-button")]),
                  html.Div(style={'padding': '10px 5px', 'display': 'inline-block', 'float': 'right'},
                           children=[html.Button(style={'width': '120px', 'padding': '0'},
                                                 children=["Over Time ", html.I(className="fa-solid fa-arrow-trend-up")], id="time-button")]),
