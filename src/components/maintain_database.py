@@ -422,7 +422,7 @@ class MaintainDatabase:
         return self.accounts_table.delete_one(row_data)
 
     """====== Category ======"""
-    def add_category(self, category_name, category_parent=None):
+    def add_category(self, category_name, category_parent=''):
         """Add new category in database ... """
         return self.categories_table.insert_one({'parent': category_parent, 'category name': category_name, 'hidden': False})
 
