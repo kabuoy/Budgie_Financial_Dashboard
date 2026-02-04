@@ -70,7 +70,7 @@ class MaintainDatabase:
             df.drop(len(df) - 1, inplace=True)
             df = df.rename(columns={'Datetime': 'posted date', 'Note': 'description', 'Amount (total)': 'amount'})
             df['amount'] = [''.join(val.split(' $')) for val in df['amount']]
-            df['amount'] = df['amount'].astype(float)
+            df['amount'] = df['amount'].str.replace(',', '').astype(float)
             df['posted date'] = [val.split('T')[0] for val in df['posted date']]
             # TODO 'replace' is depreciated, so update this
             source = df['Funding Source'].replace({'Venmo balance': np.nan})
