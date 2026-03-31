@@ -3,7 +3,6 @@
 
 a = Analysis(
     ['Budgie.py'],
-    pathex=['C:\\Users\\harnish\\AppData\\Local\\miniconda3\\envs\\dash_visualizer'],
     binaries=[],
     datas=[('components', '.'), ('assets', 'assets')],
     hookspath=[],
