@@ -4,7 +4,8 @@
 a = Analysis(
     ['Budgie.py'],
     binaries=[],
-    datas=[('components', '.'), ('assets', 'assets')],
+    datas=[('components', '.'), ('assets', 'assets'), ('dash_ag_grid', 'dash_ag_grid')],
+    hiddenimports=['dash_ag_grid'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
