@@ -1,0 +1,27 @@
+name: Build and Release Executables
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
+      with:
+        python-version: '3.13'
+    - uses: Gr1N/setup-poetry@v9
+
+    - run: poetry install
+
+    - run: poetry run pyinstaller Budgie.spec
+      working-directory: ./src
+
+    - uses: actions/upload-artifact@v6
+      with:
+        name: Budgie-${{ matrix.os }}
+        path: src/dist/*
