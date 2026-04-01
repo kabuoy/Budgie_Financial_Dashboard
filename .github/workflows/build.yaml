@@ -10,15 +10,17 @@ jobs:
         os: [windows-latest]
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
       with:
-        python-version: '3.11'
+        python-version: '3.12'
 
     - run: pip install -r requirements.txt pyinstaller
+
     - run: pyinstaller Budgie.spec
       working-directory: ./src
-    - uses: actions/upload-artifact@v4
+
+    - uses: actions/upload-artifact@v6
       with:
-        name: Budgie-app-${{ matrix.os }}
+        name: Budgie-${{ matrix.os }}
         path: src/dist/*

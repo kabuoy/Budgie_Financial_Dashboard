@@ -1,8 +1,8 @@
 dash~=4.1.0
 dash_ag_grid~=33.3.3
-dash-bootstrap-components~=1.5.0
-plotly~=5.20.0
-pandas~=2.2.1
+dash-bootstrap-components~=2.0.4
+plotly~=6.6.0
+pandas~=3.0.2
 pymongo~=4.6.2
 python-dotenv~=1.0.1
 python-dateutil~=2.9.0
