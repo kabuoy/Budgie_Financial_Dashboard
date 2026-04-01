@@ -18,7 +18,7 @@ jobs:
 
     - run: poetry install
 
-    - run: pyinstaller Budgie.spec
+    - run: poetry run pyinstaller Budgie.spec
       working-directory: ./src
 
     - uses: actions/upload-artifact@v6
