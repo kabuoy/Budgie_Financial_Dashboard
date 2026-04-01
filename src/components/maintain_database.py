@@ -70,15 +70,20 @@ class MaintainDatabase:
             df.drop(len(df) - 1, inplace=True)
             df = df.rename(columns={'Datetime': 'posted date', 'Note': 'description', 'Amount (total)': 'amount'})
             df['amount'] = [''.join(val.split(' $')) for val in df['amount']]
-            df['amount'] = df['amount'].str.replace(',', '').astype(float)
-            df['posted date'] = [val.split('T')[0] for val in df['posted date']]
-            # TODO 'replace' is depreciated, so update this
-            source = df['Funding Source'].replace({'Venmo balance': np.nan})
-            if any(~source.isna()):
-                df['notes'] = 'Source: ' + source
-            # Add description if it's a transfer out of Venmo
-            for i in np.argwhere(df['Type'] == 'Standard Transfer'):
-                df.loc[i, 'description'] = f"Transfer to {df.loc[i, 'Destination'].values[0]}"
+
+            # If there's no transactions, just skip the file
+            if len(df['amount']) == 0:
+                return []
+            else:
+                df['amount'] = df['amount'].str.replace(',', '').astype(float)
+                df['posted date'] = [val.split('T')[0] for val in df['posted date']]
+                # TODO 'replace' is depreciated, so update this
+                source = df['Funding Source'].replace({'Venmo balance': np.nan})
+                if any(~source.isna()):
+                    df['notes'] = 'Source: ' + source
+                # Add description if it's a transfer out of Venmo
+                for i in np.argwhere(df['Type'] == 'Standard Transfer'):
+                    df.loc[i, 'description'] = f"Transfer to {df.loc[i, 'Destination'].values[0]}"
 
         # Standardize sheet columns
         df = df.dropna(axis='columns', how='all')
