@@ -51,7 +51,7 @@ configurations_sidebar = html.Div(
                           children=["Sort By"]),
                 html.Div(style={'width': '54%', 'display': 'inline-block', 'padding': '20px 0 10px 0',
                                 'vertical-align': 'middle'},
-                         children=[dcc.Dropdown(id='sort-dropdown', value=zero_params_dict()['field_filter'],
+                         children=[dcc.Dropdown(id='sort-dropdown', value=zero_params_dict()['sort_filter'],
                                                 clearable=False, searchable=False, className='dropdown',
                                                 options=['Category', 'Account Name'],
                                                 ),

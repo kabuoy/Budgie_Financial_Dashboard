@@ -3,10 +3,9 @@
 
 a = Analysis(
     ['Budgie.py'],
-    pathex=['C:\\Users\\harnish\\AppData\\Local\\miniconda3\\envs\\dash_visualizer'],
     binaries=[],
-    datas=[('components', '.'), ('assets', 'assets'), ('C:\\Users\\harnish\\AppData\\Local\\miniconda3\\envs\\dash_visualizer\\Lib\\site-packages\\dash_ag_grid', 'dash_ag_grid'), ('C:\\Users\\harnish\\AppData\\Local\\miniconda3\\envs\\dash_visualizer\\Lib\\site-packages\\pymongo', 'pymongo')],
-    hiddenimports=['dash_ag_grid', 'pymongo'],
+    datas=[('components', '.'), ('assets', 'assets'), ('dash_ag_grid', 'dash_ag_grid')],
+    hiddenimports=['dash_ag_grid'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
