@@ -1,6 +1,10 @@
-name: Build and Release Executables
+name: Build and Release Budgie Executables
 
-on: [push, workflow_dispatch]
+on: 
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
