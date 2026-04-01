@@ -74,7 +74,6 @@ class MaintainCSV(MaintainDatabase):
             print('CSV Data Directory: ', self.file_dir)
         else:
             # we are running in a normal Python environment
-            # load_dotenv()
             self.file_dir = os.getenv("DATA_DIR")
 
         if not os.path.isdir(self.file_dir):
