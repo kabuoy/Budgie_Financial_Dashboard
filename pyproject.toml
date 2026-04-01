@@ -2,7 +2,7 @@
 name = "Budgie"
 version = "1.3.0"
 description = "A quick visualizer to monitor your personal finances."
-authors = ["kabouy https://github.com/kabuoy"]
+authors = ["kabuoy https://github.com/kabuoy"]
 repository = "https://github.com/kabuoy/Budgie_Financial_Dashboard"
 
 [tool.poetry.dependencies]
