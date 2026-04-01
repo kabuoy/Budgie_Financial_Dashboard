@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 import components.utils as utils
-from components.utils import zero_params_dict, MD, update_layout_axes
+from components.utils import zero_params_dict, MD, update_layout_axes, PLOTLY_COLORS
 
 
 def make_trends_plot(conf_dict):
@@ -170,33 +170,38 @@ def make_trends_plot(conf_dict):
             if previous_date <= start_date:
                 break
 
-        # Calculate spending at each date
+        # Calculate income/spending at each date window
         val_dict = {}
         net = []
         for i in range(len(days) - 1):
             this_month = transactions[(transactions['posted date'].dt.date < days[i]) & (transactions['posted date'].dt.date >= days[i + 1])]
             net.append(this_month['amount'].sum())
-            for cat, grp in this_month.groupby(conf_dict['sort_filter'].lower()):
-                try:
-                    val_dict[cat]['posted date'].append(days[i + 1])
-                    val_dict[cat]['amount'].append(grp['amount'].sum())
-                except KeyError:
-                    val_dict[cat] = {'posted date': [days[i + 1]], 'amount': [grp['amount'].sum()]}
-
-        # Alphabetize list of categories
-        val_dict = dict(sorted(val_dict.items()))
+            val_dict[days[i + 1]] = [
+                this_month[this_month['amount'] < 0]['amount'].sum(),
+                this_month[this_month['amount'] >= 0]['amount'].sum()
+            ]
 
         # Add lines and bars
-        # fig_obj.add_trace(go.Scatter(x=days[1:], y=net, name='Net Transactions', mode='markers+lines',
-        #                              marker={'color': 'black', 'size': 10}, line={'color': 'black', 'width': 3},
-        #                              hovertemplate="%{x}<br>$%{y:,.2f}<extra></extra>"))
-        for key, val in val_dict.items():
-            fig_obj.add_trace(go.Bar(x=val['posted date'], y=val['amount'], name=key, legendgroup=key,
-                                     meta=key, hovertemplate="%{meta}<br>$%{y:,.2f}<extra></extra>"))
         average = sum(net) / len(net)
-        fig_obj.add_trace(go.Scatter(x=days[1:], y=[average] * (len(days) - 1), mode='lines', line={'color': 'black', 'width': 3},
+        fig_obj.add_trace(go.Scatter(x=days[1:], y=[average] * (len(days) - 1), mode='lines', line={'color': 'darkgrey', 'width': 2},
                                      name='Average Transactions', legendgroup='Average Transactions',
                                      meta=average, hovertemplate="Average<br>$%{meta:,.2f}<extra></extra>"))
+
+        fig_obj.add_trace(go.Scatter(x=days[1:],
+                                     y=net,
+                                     name='Net Transactions',
+                                     mode='markers+lines',
+                                     marker={'color': 'black', 'size': 10},
+                                     line={'color': 'black', 'width': 3},
+                                     hovertemplate="%{x}<br>$%{y:,.2f}<extra></extra>"))
+        for key, val in val_dict.items():
+            fig_obj.add_trace(go.Bar(x=[key] * 2,
+                                     y=val,
+                                     marker_color=[PLOTLY_COLORS[1], PLOTLY_COLORS[2]],
+                                     hovertemplate="$%{y:,.2f}<extra></extra>",
+                                     showlegend=False,
+                                     )
+                              )
 
         fig_obj.update_xaxes(title_text="Posted Date")
         fig_obj.update_yaxes(title_text="Amount ($)")
@@ -256,7 +261,7 @@ trends_tab = dcc.Tab(label="Trends", value='Trends', children=[
                                              html.Li('Bar: To compare income vs spending'),
                                              html.Li('Sankey: To visualize income and spending per category'),
                                              html.Li('Pie: To compare percent of spending per category'),
-                                             # html.Li('Over time: To compare spending and income over time'), html.Br(),
+                                             html.Li('Over time: To compare spending and income over time'), html.Br(),
                                              html.Li('Table: To compare net spending and income per category'), html.Br(),
                                              "The graphs with auto-populate according to the filters given on the left. "
                                              "If you don't see any data, try changing a filter (most likely the time window).", html.Br(), html.Br(),
@@ -265,9 +270,9 @@ trends_tab = dcc.Tab(label="Trends", value='Trends', children=[
                  html.Div(style={'padding': '10px 5px', 'display': 'inline-block', 'float': 'right'},
                           children=[html.Button(style={'width': '100px', 'padding': '0'},
                                                 children=["Table ", html.I(className="fa-solid fa-table")], id="table-button")]),
-                #  html.Div(style={'padding': '10px 5px', 'display': 'inline-block', 'float': 'right'},
-                #           children=[html.Button(style={'width': '120px', 'padding': '0'},
-                #                                 children=["Over Time ", html.I(className="fa-solid fa-arrow-trend-up")], id="time-button")]),
+                 html.Div(style={'padding': '10px 5px', 'display': 'inline-block', 'float': 'right'},
+                          children=[html.Button(style={'width': '120px', 'padding': '0'},
+                                                children=["Over Time ", html.I(className="fa-solid fa-arrow-trend-up")], id="time-button")]),
                  html.Div(style={'padding': '10px 5px', 'display': 'inline-block', 'float': 'right'},
                           children=[html.Button(style={'width': '75px', 'padding': '0'},
                                                 children=["Pie ", html.I(className="fas fa-chart-pie")], id="pie-button")]),
