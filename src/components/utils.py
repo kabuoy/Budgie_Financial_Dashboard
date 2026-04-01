@@ -60,7 +60,7 @@ elif os.getenv("DATA_DIR") is not None:
     print(f"Using CSV data from {os.getenv('DATA_DIR')}")
 elif getattr(sys, 'frozen', False):
     MD = MaintainCSV()
-    print(f"Using CSV data from default directory: {os.getcwd()}")
+    print(f"Using CSV data from default directory: {MD.file_dir}\n")
 else:
     print("You must specify either 'DATA_DIR=</path/to/dir>' or 'MONGO_HOST==mongodb://ip.to.mongo:27017/' in the .env file")
     quit()

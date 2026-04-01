@@ -131,4 +131,5 @@ def update_tab_data(current_params, which_tab, update_tab):
 
 if __name__ == '__main__':
     # Use host='0.0.0.0' for running in Docker and host='127.0.0.1' for running in IDE
+    # Use debug=True for live reloading during development
     app.run(host='127.0.0.1', port=8050, debug=False)
