@@ -15,7 +15,7 @@ jobs:
       with:
         python-version: '3.12'
 
-    - run: pip install -r requirements.txt pyinstaller
+    - run: poetry install
 
     - run: pyinstaller Budgie.spec
       working-directory: ./src
